@@ -18,13 +18,20 @@ Use a server, not `file://` - fonts and the audio work better over http.
 ```
 index.html      page
 css/style.css   all styles, palette tokens at the top
-js/main.js      sequencer + audio engine, logo thump + letter pulse, scroll lizard, ribbons
+js/main.js      plays the carnaval recording, beat/whistle detection drives the dancing letters, ribbons
+audio/          carnaval-sao-paulo.mp3 (CC0, Felix Blume, Bloco Lucero, São Paulo)
 images/src/     original logo files
 images/         web versions (transparent webp logos, favicon, apple-touch-icon, og.png share image)
 CNAME           calango-batucada.com
 ```
 
-Edit the starter groove in `js/main.js` (`INSTRUMENTS[].pattern`, 16 chars, `x` = hit).
+## WhatsApp
+
+All WhatsApp links use the placeholder `SIMBA_NUMBER`. Set Simba's number (international format, no `+`, no leading 0):
+
+```sh
+sed -i 's/SIMBA_NUMBER/9725XXXXXXXX/g' index.html
+```
 
 ## GitHub Pages + domain
 
@@ -36,5 +43,5 @@ Edit the starter groove in `js/main.js` (`INSTRUMENTS[].pattern`, 16 chars, `x` 
 
 ## Placeholders to replace
 
-- `hello@calango-batucada.com` - needs email forwarding set up on the domain, or swap for a real address.
+- `SIMBA_NUMBER` - see WhatsApp above.
 - `instagram.com/calangobatucada` - swap for the real handle.

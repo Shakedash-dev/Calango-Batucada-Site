@@ -27,23 +27,21 @@
 - **Fitas do Senhor do Bonfim**: the colored wish ribbons of Salvador, used as dividers.
 - **Olodum / Bahia colors**: flat, loud, no gradients.
 
-## 2. Plan - what makes it not basic
+## 2. Plan - what makes it not basic (v2, Hebrew)
 
-1. **The site plays.** A real 16-step bateria sequencer (Web Audio, synthesized, no audio files). It comes loaded with a
-   samba-reggae-ish groove. Visitors toggle hits, change BPM, break it, reset it. It's the centerpiece,
-   not a gimmick in the corner.
-2. **The hero hears the surdo.** The painted logo thumps on every fundo hit and the "BIG DRUMS." letters jump while the groove plays.
-   Each letter also stretches on hover (variable font `wdth` axis).
-3. **A calango crawls the page.** A small woodcut lizard runs down the right edge as you scroll and turns around
-   when you scroll up.
-4. **Honest about being new.** No fake gig calendar or empty gallery. A "Year zero" section turns "just started"
-   into the story: forming -> rehearsals -> street.
-5. **Recruiting poster, not a form.** "PROCURA-SE" wheatpaste poster with tape and torn edges.
+1. **Real carnaval, reacting live.** "הדליקו את הקרנבל" plays a real field recording (Felix Blume, Bloco Lucero,
+   Avenida Paulista, São Paulo, CC0), trimmed to the moment the bateria kicks in. Web Audio *listens* to it:
+   surdo hits make the "קרנבל!" letters jump, strong hits thump the logo, whistles (apito) shake the stamp,
+   and the ribbons speed up. Nothing is synthesized.
+2. **Booking first.** Main section is "קרנבל באירוע שלכם" with event types and one WhatsApp CTA to Simba.
+3. **Real proof.** The band's own drum photo, with the logo painted on the head, pinned like a polaroid.
+4. **Recruiting poster, not a form.** "דרושים ודרושות" wheatpaste poster, WhatsApp CTA.
+5. **The calango stays in the background.** Faint silhouettes only, no copy about it.
 
 ## 3. Anti-generic rules used in implementation
 
 - No gradient blobs, glassmorphism, purple, emoji icons, rotating circle-text badges, or three identical feature cards.
-- No Inter / Space Grotesk. Display: **Anybody** (variable width, animated). Body: **Familjen Grotesk**.
+- Hebrew, RTL. Display: **Karantina** (condensed Hebrew poster face). Body: **Rubik**.
 - Brand palette sampled from the painted logo: paper `#FBF0DF`, ink `#17130E`, forest green `#2E592A`,
   red `#D72E14`, mustard `#F59B10`.
 - The logo is brush/watercolor, the site type is woodcut/poster. Contrast on purpose: the logo is the one
@@ -51,6 +49,6 @@
 - Hard offset shadows and thick ink borders instead of soft shadows.
 - Paper grain plus an SVG displacement filter for a printed, slightly off look.
 - Left-aligned, asymmetric layouts. Things are rotated a degree or two, like pasted by hand.
-- Copy has a voice and uses a bit of Portuguese (bateria, ensaio, bora) where it fits.
+- Copy has a voice, Hebrew with Brazilian instrument names (סורדו, קאישה, אפיטו).
 - No build step, no framework: plain HTML / CSS / JS. GitHub Pages serves it as-is.
 - `prefers-reduced-motion` respected. Audio only starts on click.

@@ -1,248 +1,171 @@
-/* Calango Batucada - bateria sequencer (Web Audio, all synthesized), wordmark pulse,
-   scroll lizard, ribbon fill. No dependencies. */
+/* קלאנגו - real carnaval recording with letters that dance to its drum hits, ribbon fill. No dependencies. */
 (() => {
   "use strict";
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const STEPS = 16;
 
-  // Samba-reggae-ish starter groove. "x" = hit. Edit freely.
-  const INSTRUMENTS = [
-    { id: "fundo",    name: "Surdo fundo", note: "The heartbeat. Biggest, lowest.",  color: "#D72E14", pattern: "....x.......x..." },
-    { id: "dobra",    name: "Surdo dobra", note: "Answers the fundo.",               color: "#F59B10", pattern: "x.....x.x.....x." },
-    { id: "caixa",    name: "Caixa",       note: "Snare. Keeps everyone honest.",    color: "#6E9E4F", pattern: "x..x..x...x.x..." },
-    { id: "repique",  name: "Repique",     note: "The caller. Starts and stops it.", color: "#FBF0DF", pattern: "..x..x....x..xx." },
-    { id: "agogo",    name: "Agogô",       note: "Two bells, one melody.",           color: "#F6BC54", pattern: "x.x..x.xx.x..x.." },
-    { id: "chocalho", name: "Chocalho",    note: "Shaker. The sizzle on top.",       color: "#D9C7A6", pattern: ".x.x.x.x.x.x.x.x" },
-  ];
+  /* ---------------- carnaval: play the recording, react to what's in it ---------------- */
+  const audio = document.getElementById("carnaval");
+  const toggles = document.querySelectorAll("[data-carnaval]");
+  const letters = [...document.querySelectorAll(".dance .w")];
+  const logo = document.querySelector(".hero__logo img");
+  const stamp = document.querySelector(".hero__stamp");
+  const hero = document.querySelector(".hero");
 
-  const toBools = (p) => [...p].map((c) => c === "x");
-  let grid = INSTRUMENTS.map((i) => toBools(i.pattern));
-
-  /* ---------------- audio ---------------- */
   let ctx = null;
-  let master = null;
-  let noise = null;
-
-  function initAudio() {
-    if (ctx) return;
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const comp = ctx.createDynamicsCompressor();
-    comp.threshold.value = -14;
-    comp.ratio.value = 4;
-    master = ctx.createGain();
-    master.gain.value = 0.8;
-    master.connect(comp).connect(ctx.destination);
-
-    noise = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate);
-    const d = noise.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-  }
-
-  function env(t, peak, decay) {
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(peak, t + 0.004);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-    g.connect(master);
-    return g;
-  }
-
-  function tone(t, type, f0, f1, sweep, peak, decay) {
-    const o = ctx.createOscillator();
-    o.type = type;
-    o.frequency.setValueAtTime(f0, t);
-    if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + sweep);
-    o.connect(env(t, peak, decay));
-    o.start(t);
-    o.stop(t + decay + 0.05);
-  }
-
-  function hiss(t, filterType, freq, q, peak, decay) {
-    const s = ctx.createBufferSource();
-    s.buffer = noise;
-    const f = ctx.createBiquadFilter();
-    f.type = filterType;
-    f.frequency.value = freq;
-    f.Q.value = q;
-    s.connect(f).connect(env(t, peak, decay));
-    s.start(t);
-    s.stop(t + decay + 0.05);
-  }
-
-  const VOICES = {
-    fundo(t)    { tone(t, "sine", 120, 52, 0.09, 1.0, 0.7); hiss(t, "lowpass", 400, 0.7, 0.25, 0.05); },
-    dobra(t)    { tone(t, "sine", 170, 82, 0.07, 0.8, 0.45); hiss(t, "lowpass", 600, 0.7, 0.2, 0.04); },
-    caixa(t)    { hiss(t, "highpass", 1800, 0.8, 0.5, 0.11); tone(t, "triangle", 260, 180, 0.03, 0.18, 0.06); },
-    repique(t)  { tone(t, "triangle", 520, 360, 0.04, 0.5, 0.14); hiss(t, "bandpass", 2600, 1.2, 0.3, 0.06); },
-    agogo(t, s) {
-      const high = s % 4 !== 2; // alternate bells for a little melody
-      const f = high ? 930 : 690;
-      tone(t, "sine", f, 0, 0, 0.32, 0.3);
-      tone(t, "square", f * 2.01, 0, 0, 0.035, 0.12);
-    },
-    chocalho(t, s) { hiss(t, "highpass", 6500, 0.6, s % 2 ? 0.2 : 0.09, 0.05); },
-  };
-
-  /* ---------------- scheduler ---------------- */
-  let bpm = 98;
+  let analyser = null;
+  let bins = null;
   let playing = false;
-  let step = 0;
-  let nextTime = 0;
-  let timer = null;
-  const visualQueue = [];
 
-  const stepDur = () => 60 / bpm / 4;
-
-  function schedule() {
-    while (nextTime < ctx.currentTime + 0.12) {
-      // light swing on the "e" and "a" of each beat, samba doesn't sit square
-      const swing = step % 2 ? stepDur() * 0.08 : 0;
-      const t = nextTime + swing;
-      INSTRUMENTS.forEach((inst, r) => { if (grid[r][step]) VOICES[inst.id](t, step); });
-      visualQueue.push({ step, time: t });
-      nextTime += stepDur();
-      step = (step + 1) % STEPS;
+  // Web Audio is only used to *listen* to the recording. If it fails (old browser, file://),
+  // the audio still plays and the letters fall back to a steady samba pulse.
+  function connectAnalyser() {
+    if (ctx) return;
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = ctx.createMediaElementSource(audio);
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0.15;
+      source.connect(analyser);
+      analyser.connect(ctx.destination);
+      bins = new Uint8Array(analyser.frequencyBinCount);
+    } catch (e) {
+      analyser = null;
     }
   }
 
-  function start() {
-    initAudio();
-    if (ctx.state === "suspended") ctx.resume();
-    playing = true;
-    step = 0;
-    nextTime = ctx.currentTime + 0.06;
-    timer = setInterval(schedule, 25);
-    schedule();
-    syncButtons();
-    requestAnimationFrame(draw);
+  const hzToBin = (hz) => Math.round(hz / (ctx.sampleRate / analyser.fftSize));
+  function bandAvg(lo, hi) {
+    let sum = 0;
+    const a = hzToBin(lo), b = hzToBin(hi);
+    for (let i = a; i <= b; i++) sum += bins[i];
+    return sum / (b - a + 1);
+  }
+  function bandPeakRatio(lo, hi) {
+    const a = hzToBin(lo), b = hzToBin(hi);
+    const slice = Array.from(bins.subarray(a, b + 1)).sort((x, y) => x - y);
+    return { peak: slice[slice.length - 1], ratio: slice[slice.length - 1] / (slice[slice.length >> 1] + 1) };
   }
 
-  function stop() {
-    playing = false;
-    clearInterval(timer);
-    visualQueue.length = 0;
-    clearHead();
-    syncButtons();
-  }
+  const rand = (min, max) => min + Math.random() * (max - min);
 
-  const toggleButtons = document.querySelectorAll("[data-toggle-groove]");
-  function syncButtons() {
-    toggleButtons.forEach((b) => {
-      b.setAttribute("aria-pressed", String(playing));
-      const label = b.querySelector(".btn__label");
-      const base = b.dataset.base || (b.dataset.base = label.textContent);
-      label.textContent = playing ? "Stop" : base;
-    });
-  }
-  toggleButtons.forEach((b) => b.addEventListener("click", () => (playing ? stop() : start())));
-
-  /* ---------------- grid UI ---------------- */
-  const gridEl = document.getElementById("grid");
-  const cells = [];
-  const rows = [];
-
-  function buildGrid() {
-    gridEl.textContent = "";
-    INSTRUMENTS.forEach((inst, r) => {
-      const row = document.createElement("div");
-      row.className = "row";
-      row.style.setProperty("--c", inst.color);
-      row.innerHTML = `<div class="row__name"><b>${inst.name}</b><small>${inst.note}</small></div>`;
-      const cellWrap = document.createElement("div");
-      cellWrap.className = "cells";
-      cells[r] = [];
-      let beat;
-      for (let s = 0; s < STEPS; s++) {
-        if (s % 4 === 0) { beat = document.createElement("div"); beat.className = "beat"; cellWrap.appendChild(beat); }
-        const c = document.createElement("button");
-        c.type = "button";
-        c.className = "cell";
-        c.setAttribute("aria-label", `${inst.name}, step ${s + 1}`);
-        c.setAttribute("aria-pressed", String(grid[r][s]));
-        c.addEventListener("click", () => {
-          grid[r][s] = !grid[r][s];
-          c.setAttribute("aria-pressed", String(grid[r][s]));
-          // audition the hit when stopped, feels better than silence
-          if (!playing && grid[r][s]) { initAudio(); ctx.resume(); VOICES[inst.id](ctx.currentTime + 0.01, s); }
-        });
-        beat.appendChild(c);
-        cells[r][s] = c;
-      }
-      row.appendChild(cellWrap);
-      gridEl.appendChild(row);
-      rows[r] = row;
-    });
-  }
-
-  function refreshGrid() {
-    grid.forEach((line, r) => line.forEach((on, s) => cells[r][s].setAttribute("aria-pressed", String(on))));
-  }
-
-  let lastHead = -1;
-  function clearHead() {
-    if (lastHead < 0) return;
-    cells.forEach((line) => line[lastHead].classList.remove("is-head"));
-    lastHead = -1;
-  }
-
-  const letters = document.querySelectorAll(".hero__word .w");
-  let letterIdx = 0;
-  function pulseWord() {
-    if (reduceMotion || !letters.length) return;
-    const el = letters[letterIdx++ % letters.length];
+  function danceLetter(strength) {
+    if (!letters.length) return;
+    const el = letters[Math.floor(Math.random() * letters.length)];
+    el.style.setProperty("--dx", `${rand(-0.12, 0.12) * strength}em`);
+    el.style.setProperty("--dy", `${-rand(0.08, 0.3) * strength}em`);
+    el.style.setProperty("--rot", `${rand(-16, 16) * strength}deg`);
+    el.style.setProperty("--s", String(1 + rand(0.04, 0.16) * strength));
+    el.style.setProperty("--dur", `${rand(0.32, 0.5)}s`);
     el.classList.remove("hit");
     void el.offsetWidth; // restart animation
     el.classList.add("hit");
   }
 
-  const heroLogo = document.querySelector(".hero__logo img");
-  function thumpLogo() {
-    if (reduceMotion || !heroLogo) return;
-    heroLogo.classList.remove("thump");
-    void heroLogo.offsetWidth;
-    heroLogo.classList.add("thump");
+  function restart(el, cls) {
+    if (!el) return;
+    el.classList.remove(cls);
+    void el.offsetWidth;
+    el.classList.add(cls);
   }
 
-  function draw() {
+  function onBeat(strength) {
+    if (reduceMotion) return;
+    danceLetter(strength);
+    if (strength > 0.55) danceLetter(strength * 0.8);
+    const now = performance.now();
+    if (strength > 0.8 && now - lastThump > 380) { lastThump = now; restart(logo, "thump"); }
+  }
+
+  // onset detection on the surdo band: spectral flux vs. its own recent history
+  const history = [];
+  let prevLow = 0;
+  let lastBeat = 0;
+  let lastWhistle = 0;
+  let lastFallback = 0;
+  let lastThump = 0;
+
+  function frame(now) {
     if (!playing) return;
-    let current = null;
-    while (visualQueue.length && visualQueue[0].time <= ctx.currentTime) current = visualQueue.shift();
-    if (current) {
-      clearHead();
-      cells.forEach((line) => line[current.step].classList.add("is-head"));
-      lastHead = current.step;
-      INSTRUMENTS.forEach((inst, r) => rows[r].classList.toggle("is-hit", grid[r][current.step]));
-      if (grid[0][current.step] || grid[1][current.step]) pulseWord();
-      if (grid[0][current.step]) thumpLogo();
+
+    if (analyser && ctx.state === "running") {
+      analyser.getByteFrequencyData(bins);
+      const low = bandAvg(45, 160);
+      const flux = Math.max(0, low - prevLow);
+      prevLow = low;
+
+      history.push(flux);
+      if (history.length > 45) history.shift();
+      const mean = history.reduce((s, v) => s + v, 0) / history.length;
+      const sd = Math.sqrt(history.reduce((s, v) => s + (v - mean) ** 2, 0) / history.length);
+
+      if (flux > mean + 1.3 * sd && flux > 4 && now - lastBeat > 105) {
+        lastBeat = now;
+        onBeat(Math.min(1, 0.35 + flux / 30));
+      }
+
+      // apito: a loud, narrow tone between 2 and 4.5 kHz
+      const w = bandPeakRatio(2000, 4500);
+      if (w.peak > 170 && w.ratio > 1.9 && now - lastWhistle > 700) {
+        lastWhistle = now;
+        if (!reduceMotion) restart(stamp, "whistle");
+      }
+
+      hero.style.setProperty("--energy", (low / 255).toFixed(3));
+    } else if (now - lastFallback > 390) {
+      // ~77 bpm half-time surdo, same feel as the recording
+      lastFallback = now;
+      onBeat(0.7);
     }
-    requestAnimationFrame(draw);
+
+    requestAnimationFrame(frame);
   }
 
-  const bpmInput = document.getElementById("bpm");
-  const bpmOut = document.getElementById("bpm-out");
-  bpmInput.addEventListener("input", () => { bpm = +bpmInput.value; bpmOut.value = bpm; });
+  // ribbons run faster while the carnaval is on
+  function setRibbonSpeed(rate) {
+    if (!document.getAnimations) return;
+    document.getAnimations().forEach((a) => {
+      if (a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest(".fita")) {
+        a.updatePlaybackRate ? a.updatePlaybackRate(rate) : (a.playbackRate = rate);
+      }
+    });
+  }
 
-  document.getElementById("reset").addEventListener("click", () => {
-    grid = INSTRUMENTS.map((i) => toBools(i.pattern));
-    refreshGrid();
-  });
-  document.getElementById("clear").addEventListener("click", () => {
-    grid = INSTRUMENTS.map(() => Array(STEPS).fill(false));
-    refreshGrid();
-  });
+  function syncUi() {
+    document.body.classList.toggle("is-live", playing);
+    toggles.forEach((b) => {
+      b.setAttribute("aria-pressed", String(playing));
+      const label = b.querySelector(".btn__label");
+      if (label) label.textContent = playing ? label.dataset.on : label.dataset.off;
+    });
+    setRibbonSpeed(playing ? 3 : 1);
+  }
 
-  // Space toggles the groove when focus isn't on a control
-  document.addEventListener("keydown", (e) => {
-    if (e.code !== "Space" || e.target.closest("button, a, input, textarea")) return;
-    e.preventDefault();
-    playing ? stop() : start();
-  });
+  async function start() {
+    if (location.protocol !== "file:") connectAnalyser(); // file:// would mute a MediaElementSource
+    if (ctx && ctx.state === "suspended") await ctx.resume();
+    try {
+      await audio.play();
+    } catch (e) {
+      return;
+    }
+    playing = true;
+    syncUi();
+    requestAnimationFrame(frame);
+  }
 
-  // Browsers throttle timers in background tabs, stop cleanly instead of stuttering
-  document.addEventListener("visibilitychange", () => { if (document.hidden && playing) stop(); });
+  function stop() {
+    audio.pause();
+    playing = false;
+    hero.style.setProperty("--energy", "0");
+    syncUi();
+  }
 
-  buildGrid();
+  if (audio) {
+    toggles.forEach((b) => b.addEventListener("click", () => (playing ? stop() : start())));
+    audio.addEventListener("pause", () => { if (playing) stop(); });
+  }
 
   /* ---------------- ribbons: fill width, loop seamlessly ---------------- */
   function fillRibbons() {
@@ -250,39 +173,14 @@
       const unit = span.dataset.unit || (span.dataset.unit = span.textContent);
       span.textContent = unit;
       const k = Math.max(1, Math.ceil(span.parentElement.offsetWidth / Math.max(1, span.offsetWidth)));
-      span.textContent = unit.repeat(k * 2); // two identical halves, animation moves by -50%
+      span.textContent = unit.repeat(k * 2); // two identical halves, animation moves by 50%
     });
+    if (playing) setRibbonSpeed(3);
   }
   fillRibbons();
-  document.fonts && document.fonts.ready.then(fillRibbons);
+  if (document.fonts) document.fonts.ready.then(fillRibbons);
   let resizeT;
   window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(fillRibbons, 150); });
-
-  /* ---------------- crawler lizard ---------------- */
-  const crawler = document.querySelector(".crawler");
-  if (crawler && !reduceMotion) {
-    let lastY = window.scrollY;
-    let idle;
-    let ticking = false;
-    const place = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = max > 0 ? window.scrollY / max : 0;
-      const top = 84; // start below the header
-      const travel = window.innerHeight - crawler.offsetHeight - top - 12;
-      crawler.style.transform = `translateY(${top + p * travel}px)`;
-      ticking = false;
-    };
-    window.addEventListener("scroll", () => {
-      const y = window.scrollY;
-      if (y !== lastY) crawler.classList.toggle("is-up", y < lastY);
-      lastY = y;
-      crawler.classList.add("is-moving");
-      clearTimeout(idle);
-      idle = setTimeout(() => crawler.classList.remove("is-moving"), 140);
-      if (!ticking) { ticking = true; requestAnimationFrame(place); }
-    }, { passive: true });
-    place();
-  }
 
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
