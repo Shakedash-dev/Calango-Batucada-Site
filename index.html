@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calango Batucada - Bateria de rua</title>
+  <meta name="description" content="Calango Batucada is a new samba and batucada street bateria. Small lizard, big drums. Come play.">
+  <meta name="theme-color" content="#17130E">
+  <link rel="canonical" href="https://calango-batucada.com/">
+  <meta property="og:title" content="Calango Batucada">
+  <meta property="og:description" content="New bateria de rua. Small lizard, big drums.">
+  <meta property="og:url" content="https://calango-batucada.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://calango-batucada.com/images/og.png">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wdth,wght@0,50..150,400..900;1,50..150,800..900&family=Familjen+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- shared SVG defs: printed-ink filter + the calango -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="ink">
+      <feTurbulence type="fractalNoise" baseFrequency=".045" numOctaves="2" seed="7"/>
+      <feDisplacementMap in="SourceGraphic" scale="3.5"/>
+    </filter>
+    <symbol id="calango" viewBox="0 0 100 200">
+      <path d="M50 6c9 0 13 11 11 22-1 7-5 11-11 11s-10-4-11-11C37 17 41 6 50 6z"/>
+      <path d="M50 36c10 0 15 16 15 34s-5 32-15 32-15-14-15-32 5-34 15-34z"/>
+      <path d="M43 96c-1 34 17 52 7 100 9-48-1-70 7-100z"/>
+      <g class="leg leg-a"><path d="M38 52 22 45 16 31M16 31l-5-3M16 31l-1-6M16 31l3-5" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <g class="leg leg-b"><path d="M62 52l16-7 6-14M84 31l5-3M84 31l1-6M84 31l-3-5" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <g class="leg leg-b"><path d="M37 88l-15 9-3 15M19 112l-5 2M19 112l-1 6M19 112l4 4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <g class="leg leg-a"><path d="M63 88l15 9 3 15M81 112l5 2M81 112l1 6M81 112l-4 4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <g fill="var(--spot, #F1E4CB)">
+        <circle cx="46" cy="58" r="2.6"/><circle cx="55" cy="66" r="2.2"/><circle cx="45" cy="76" r="2.4"/>
+        <circle cx="54" cy="85" r="2"/><circle cx="49" cy="112" r="1.8"/><circle cx="52" cy="130" r="1.4"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- lizard that crawls down the page edge as you scroll -->
+<div class="crawler" aria-hidden="true">
+  <svg class="crawler__lizard"><use href="#calango"/></svg>
+</div>
+
+<header class="top">
+  <a class="top__brand" href="#top" aria-label="Calango Batucada home">
+    <img class="top__logo" src="images/logo.png" alt="" width="44" height="44" onerror="this.remove()">
+    <span>Calango<em>Batucada</em></span>
+  </a>
+  <nav class="top__nav" aria-label="Main">
+    <a href="#groove">Play</a>
+    <a href="#year-zero">Story</a>
+    <a class="top__join" href="#join">Join</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <p class="hero__meta">
+      <span>Bateria de rua</span>
+      <span>Samba · Samba-reggae · Batucada</span>
+      <span>Est. 2026</span>
+    </p>
+
+    <h1 class="hero__word" aria-label="Calango">
+      <span class="w" aria-hidden="true">C</span><span class="w" aria-hidden="true">A</span><span class="w" aria-hidden="true">L</span><span class="w" aria-hidden="true">A</span><span class="w" aria-hidden="true">N</span><span class="w" aria-hidden="true">G</span><span class="w" aria-hidden="true">O</span>
+    </h1>
+
+    <div class="hero__row">
+      <p class="hero__sub">Batucada</p>
+      <p class="hero__stamp">New bateria<br>forming <strong>now</strong></p>
+    </div>
+
+    <div class="hero__foot">
+      <p class="hero__lede">Small lizard. Big drums.<br>A brand new street percussion band. Surdos loud, feet moving.</p>
+      <div class="hero__actions">
+        <button class="btn btn--play" type="button" data-toggle-groove aria-pressed="false">
+          <span class="btn__icon" aria-hidden="true"></span>
+          <span class="btn__label">Press play</span>
+        </button>
+        <a class="btn btn--ghost" href="#join">Join the bateria</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ribbon divider: fitas do Bonfim -->
+  <div class="fitas" aria-hidden="true">
+    <div class="fita fita--sun"><span>Calango · Batucada · Bateria de rua · Bora · </span></div>
+    <div class="fita fita--green"><span>Surdo · Caixa · Repique · Agogô · Chocalho · </span></div>
+    <div class="fita fita--red"><span>Ensaio · Rua · Carnaval · Calor · </span></div>
+  </div>
+
+  <!-- WHAT'S A CALANGO -->
+  <section class="about" id="about">
+    <div class="about__text">
+      <p class="label">So what's a calango?</p>
+      <h2 class="about__title">A small lizard from the Brazilian&nbsp;sertão.</h2>
+      <p class="about__body">It lives on burning rocks, moves in fast bursts and never sits still for long. Tiny, loud when it wants to be, built for the heat.</p>
+      <p class="about__body about__body--big">That's the band. <mark>Same energy, more drums.</mark></p>
+    </div>
+    <figure class="about__art" aria-hidden="true">
+      <svg class="about__lizard"><use href="#calango"/></svg>
+      <figcaption>Fig. 1. <i>Tropidurus</i>, bateria section.</figcaption>
+    </figure>
+  </section>
+
+  <!-- SEQUENCER -->
+  <section class="groove" id="groove" aria-labelledby="groove-title">
+    <div class="groove__head">
+      <p class="label label--light">The bateria / interactive</p>
+      <h2 class="groove__title" id="groove-title">Play the<br>bateria.</h2>
+      <p class="groove__intro">Every row is one section of the band. Every square is one hit. Press play, tap squares, break the groove, then put it back together. This is basically what ensaio feels like.</p>
+    </div>
+
+    <div class="rig">
+      <div class="rig__controls">
+        <button class="btn btn--play btn--light" type="button" data-toggle-groove aria-pressed="false">
+          <span class="btn__icon" aria-hidden="true"></span>
+          <span class="btn__label">Play</span>
+        </button>
+        <label class="bpm">
+          <span class="bpm__label">BPM</span>
+          <input type="range" id="bpm" min="70" max="140" value="98" step="1">
+          <output id="bpm-out" for="bpm">98</output>
+        </label>
+        <div class="rig__tools">
+          <button class="chip" type="button" id="reset">Reset groove</button>
+          <button class="chip" type="button" id="clear">Clear</button>
+        </div>
+      </div>
+
+      <div class="grid" id="grid" role="group" aria-label="Rhythm grid"></div>
+      <noscript><p class="groove__intro">The bateria needs JavaScript to play. The drums are patient, they'll wait.</p></noscript>
+    </div>
+  </section>
+
+  <!-- YEAR ZERO -->
+  <section class="zero" id="year-zero" aria-labelledby="zero-title">
+    <p class="label">Year zero</p>
+    <h2 class="zero__title" id="zero-title">No history yet.<br><span>That's the good part.</span></h2>
+    <ol class="zero__steps">
+      <li class="step step--now">
+        <span class="step__pin">You are here</span>
+        <span class="step__n">01</span>
+        <h3>Forming</h3>
+        <p>The founders, the first drums, the first sore hands. Picking rhythms, arguing about names. (Name is done. Calango won.)</p>
+      </li>
+      <li class="step">
+        <span class="step__n">02</span>
+        <h3>Ensaio</h3>
+        <p>Regular rehearsals. Same grooves over and over until they live in the body, not the head.</p>
+      </li>
+      <li class="step">
+        <span class="step__n">03</span>
+        <h3>Rua</h3>
+        <p>The street. Parades, festivals, block parties, maybe your event. Loud and moving.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- JOIN POSTER -->
+  <section class="join" id="join" aria-labelledby="join-title">
+    <div class="poster-wrap">
+    <span class="tape tape--l" aria-hidden="true"></span>
+    <span class="tape tape--r" aria-hidden="true"></span>
+    <div class="poster">
+      <p class="poster__kicker">Wanted / Procura-se</p>
+      <h2 class="poster__title" id="join-title">Drum<wbr>mers</h2>
+      <p class="poster__sub">and people who <em>want to be</em> drummers</p>
+      <ul class="poster__list">
+        <li><b>Two hands.</b> Rhythm optional, we'll install it.</li>
+        <li><b>Show up.</b> The groove only works when the section is there.</li>
+        <li><b>Like it loud.</b> Surdos are not a quiet hobby.</li>
+      </ul>
+      <a class="btn btn--ink" href="mailto:hello@calango-batucada.com?subject=I%20want%20to%20join%20the%20bateria">Sign me up</a>
+      <p class="poster__fine">Early members pick their instrument first.</p>
+    </div>
+    </div>
+
+    <aside class="join__side">
+      <p class="label">Also</p>
+      <h3>Throwing something later this year?</h3>
+      <p>We're not gig-ready yet. Tell us about your event anyway and we'll come find you when we are.</p>
+      <a class="link" href="mailto:hello@calango-batucada.com?subject=Event%20for%20Calango%20Batucada">Get on the list</a>
+    </aside>
+  </section>
+
+</main>
+
+<footer class="foot" id="contact">
+  <p class="foot__big">Bora<br>tocar?</p>
+  <div class="foot__cols">
+    <div>
+      <p class="label label--light">Write</p>
+      <a class="foot__link" href="mailto:hello@calango-batucada.com">hello@calango-batucada.com</a>
+    </div>
+    <div>
+      <p class="label label--light">Follow</p>
+      <a class="foot__link" href="https://instagram.com/calangobatucada" rel="noopener">Instagram @calangobatucada</a>
+    </div>
+  </div>
+  <p class="foot__fine">© <span id="year">2026</span> Calango Batucada. Made with surdo energy.</p>
+</footer>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>
