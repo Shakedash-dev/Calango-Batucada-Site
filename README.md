@@ -33,7 +33,7 @@ CNAME           calango-batucada.com
 ## Audio
 
 `audio/carnaval-sao-paulo.mp3` is a 90s cut of [Felix Blume - Pre-Carnaval in Sao Paulo with the Bloco Lucero](https://freesound.org/people/felix.blume/sounds/384104/) (CC0),
-from 95.40s (repinique call) to 185.40s. No processing besides a 20ms fade-in, 2.5s fade-out and peak normalize.
+from 105.40s to 195.40s. No processing besides a 60ms fade-in, 2.5s fade-out and peak normalize.
 
 ## GitHub Pages + domain
 

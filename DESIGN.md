@@ -30,7 +30,7 @@
 ## 2. Plan - what makes it not basic (v2, Hebrew)
 
 1. **Real carnaval, reacting live.** "הדליקו את הקרנבל" plays a real field recording (Felix Blume, Bloco Lucero,
-   Avenida Paulista, São Paulo, CC0), trimmed to start on the repinique call. Web Audio *listens* to it:
+   Avenida Paulista, São Paulo, CC0), trimmed to 90s of the full bateria. Web Audio *listens* to it:
    surdo hits make the "קרנבל!" letters jump, strong hits thump the logo, whistles (apito) shake the stamp,
    the ribbons bounce (they keep a readable speed) and confetti bursts from the drum. Nothing is synthesized.
 2. **Booking first.** Main section is "קרנבל באירוע שלכם" with event types and one WhatsApp CTA to Simba.
