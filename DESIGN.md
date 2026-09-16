@@ -32,7 +32,7 @@
 1. **The site plays.** A real 16-step bateria sequencer (Web Audio, synthesized, no audio files). It comes loaded with a
    samba-reggae-ish groove. Visitors toggle hits, change BPM, break it, reset it. It's the centerpiece,
    not a gimmick in the corner.
-2. **The wordmark hears the surdo.** Hero letters jump on every low-surdo hit while the groove plays.
+2. **The hero hears the surdo.** The painted logo thumps on every fundo hit and the "BIG DRUMS." letters jump while the groove plays.
    Each letter also stretches on hover (variable font `wdth` axis).
 3. **A calango crawls the page.** A small woodcut lizard runs down the right edge as you scroll and turns around
    when you scroll up.
@@ -44,8 +44,10 @@
 
 - No gradient blobs, glassmorphism, purple, emoji icons, rotating circle-text badges, or three identical feature cards.
 - No Inter / Space Grotesk. Display: **Anybody** (variable width, animated). Body: **Familjen Grotesk**.
-- Fixed brand palette: paper `#F1E4CB`, ink `#17130E`, calango green `#A8CF3A`, urucum red `#D9461B`,
-  sun `#F5B20F`, Bahia teal `#1E6C74` (sparingly). Swap to match the real logo once it's in.
+- Brand palette sampled from the painted logo: paper `#FBF0DF`, ink `#17130E`, forest green `#2E592A`,
+  red `#D72E14`, mustard `#F59B10`.
+- The logo is brush/watercolor, the site type is woodcut/poster. Contrast on purpose: the logo is the one
+  painted, human thing on the page, everything around it is flat ink.
 - Hard offset shadows and thick ink borders instead of soft shadows.
 - Paper grain plus an SVG displacement filter for a printed, slightly off look.
 - Left-aligned, asymmetric layouts. Things are rotated a degree or two, like pasted by hand.

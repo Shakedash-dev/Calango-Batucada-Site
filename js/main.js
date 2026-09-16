@@ -8,12 +8,12 @@
 
   // Samba-reggae-ish starter groove. "x" = hit. Edit freely.
   const INSTRUMENTS = [
-    { id: "fundo",    name: "Surdo fundo", note: "The heartbeat. Biggest, lowest.",  color: "#D9461B", pattern: "....x.......x..." },
-    { id: "dobra",    name: "Surdo dobra", note: "Answers the fundo.",               color: "#F5B20F", pattern: "x.....x.x.....x." },
-    { id: "caixa",    name: "Caixa",       note: "Snare. Keeps everyone honest.",    color: "#A8CF3A", pattern: "x..x..x...x.x..." },
-    { id: "repique",  name: "Repique",     note: "The caller. Starts and stops it.", color: "#F1E4CB", pattern: "..x..x....x..xx." },
-    { id: "agogo",    name: "Agogô",       note: "Two bells, one melody.",           color: "#6FB7BF", pattern: "x.x..x.xx.x..x.." },
-    { id: "chocalho", name: "Chocalho",    note: "Shaker. The sizzle on top.",       color: "#E7D6B6", pattern: ".x.x.x.x.x.x.x.x" },
+    { id: "fundo",    name: "Surdo fundo", note: "The heartbeat. Biggest, lowest.",  color: "#D72E14", pattern: "....x.......x..." },
+    { id: "dobra",    name: "Surdo dobra", note: "Answers the fundo.",               color: "#F59B10", pattern: "x.....x.x.....x." },
+    { id: "caixa",    name: "Caixa",       note: "Snare. Keeps everyone honest.",    color: "#6E9E4F", pattern: "x..x..x...x.x..." },
+    { id: "repique",  name: "Repique",     note: "The caller. Starts and stops it.", color: "#FBF0DF", pattern: "..x..x....x..xx." },
+    { id: "agogo",    name: "Agogô",       note: "Two bells, one melody.",           color: "#F6BC54", pattern: "x.x..x.xx.x..x.." },
+    { id: "chocalho", name: "Chocalho",    note: "Shaker. The sizzle on top.",       color: "#D9C7A6", pattern: ".x.x.x.x.x.x.x.x" },
   ];
 
   const toBools = (p) => [...p].map((c) => c === "x");
@@ -196,6 +196,14 @@
     el.classList.add("hit");
   }
 
+  const heroLogo = document.querySelector(".hero__logo img");
+  function thumpLogo() {
+    if (reduceMotion || !heroLogo) return;
+    heroLogo.classList.remove("thump");
+    void heroLogo.offsetWidth;
+    heroLogo.classList.add("thump");
+  }
+
   function draw() {
     if (!playing) return;
     let current = null;
@@ -206,6 +214,7 @@
       lastHead = current.step;
       INSTRUMENTS.forEach((inst, r) => rows[r].classList.toggle("is-hit", grid[r][current.step]));
       if (grid[0][current.step] || grid[1][current.step]) pulseWord();
+      if (grid[0][current.step]) thumpLogo();
     }
     requestAnimationFrame(draw);
   }
@@ -235,20 +244,6 @@
 
   buildGrid();
 
-  /* ---------------- wordmark: fill the hero width exactly ---------------- */
-  const word = document.querySelector(".hero__word");
-  function fitWord() {
-    if (!word) return;
-    word.style.fontSize = "";
-    const avail = word.parentElement.clientWidth - parseFloat(getComputedStyle(word.parentElement).paddingLeft) * 2;
-    const size = parseFloat(getComputedStyle(word).fontSize);
-    // sum the letters: the h1 itself is stretched by the flex column, so its own width lies
-    const w = [...word.children].reduce((sum, el) => sum + el.getBoundingClientRect().width, 0);
-    word.style.fontSize = `${Math.min(size * (avail / w) * 0.995, 360)}px`;
-  }
-  fitWord();
-  document.fonts && document.fonts.ready.then(fitWord);
-
   /* ---------------- ribbons: fill width, loop seamlessly ---------------- */
   function fillRibbons() {
     document.querySelectorAll(".fita span").forEach((span) => {
@@ -261,7 +256,7 @@
   fillRibbons();
   document.fonts && document.fonts.ready.then(fillRibbons);
   let resizeT;
-  window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(() => { fitWord(); fillRibbons(); }, 150); });
+  window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(fillRibbons, 150); });
 
   /* ---------------- crawler lizard ---------------- */
   const crawler = document.querySelector(".crawler");

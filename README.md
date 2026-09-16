@@ -4,19 +4,23 @@ Static site for Calango Batucada. Plain HTML / CSS / JS, no build step. Design r
 
 ## Run locally
 
+From the repo root (any static server works, no install needed):
+
 ```sh
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
+
+Use a server, not `file://` - fonts and the audio work better over http.
 
 ## Structure
 
 ```
 index.html      page
 css/style.css   all styles, palette tokens at the top
-js/main.js      sequencer + audio engine, wordmark fit/pulse, scroll lizard, ribbons
-favicon.svg     lizard icon
-images/         logo.png (nav), og.png (1200x630 social preview) - add these
+js/main.js      sequencer + audio engine, logo thump + letter pulse, scroll lizard, ribbons
+images/src/     original logo files
+images/         web versions (transparent webp logos, favicon, apple-touch-icon, og.png share image)
 CNAME           calango-batucada.com
 ```
 
