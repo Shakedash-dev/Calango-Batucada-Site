@@ -25,13 +25,15 @@ images/         web versions (transparent webp logos, favicon, apple-touch-icon,
 CNAME           calango-batucada.com
 ```
 
-## WhatsApp
+## Contact links
 
-All WhatsApp links use the placeholder `SIMBA_NUMBER`. Set Simba's number (international format, no `+`, no leading 0):
+- WhatsApp (Simba, 972549791966): 4 links in `index.html` - booking message on nav/booking/footer, join message on the poster.
+- Instagram: `https://www.instagram.com/calango.batucada/` - hero pill + footer button.
 
-```sh
-sed -i 's/SIMBA_NUMBER/9725XXXXXXXX/g' index.html
-```
+## Audio
+
+`audio/carnaval-sao-paulo.mp3` is a 90s cut of [Felix Blume - Pre-Carnaval in Sao Paulo with the Bloco Lucero](https://freesound.org/people/felix.blume/sounds/384104/) (CC0),
+from 95.40s (repinique call) to 185.40s. No processing besides a 20ms fade-in, 2.5s fade-out and peak normalize.
 
 ## GitHub Pages + domain
 
@@ -40,8 +42,3 @@ sed -i 's/SIMBA_NUMBER/9725XXXXXXXX/g' index.html
    - `A` records for `@`: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
    - `CNAME` for `www` -> `shakedash-dev.github.io`
 3. Settings -> Pages: custom domain `calango-batucada.com`, then tick **Enforce HTTPS** once the cert is issued.
-
-## Placeholders to replace
-
-- `SIMBA_NUMBER` - see WhatsApp above.
-- `instagram.com/calangobatucada` - swap for the real handle.
