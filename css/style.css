@@ -129,6 +129,9 @@ body::after {
 .top__nav a:not(.top__cta):hover { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
 .top__cta { background: var(--ink); color: var(--paper); padding: .4em .9em; transform: rotate(2deg); display: inline-block; }
 .top__cta:hover { background: var(--red); }
+.top__ig { display: inline-flex; color: var(--red); }
+.top__ig svg { width: 1.6rem; height: 1.6rem; }
+.top__ig:hover { color: var(--ink); }
 
 /* ---------- hero ---------- */
 .hero {
@@ -408,7 +411,7 @@ body::after {
   .join { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
-  .top__nav a:not(.top__cta) { display: none; }
+  .top__nav a:not(.top__cta, .top__ig) { display: none; }
   .hero__big { font-size: 38vw; }
   .events li, .kit li { grid-template-columns: 1fr; }
   .tape { width: 80px; }
